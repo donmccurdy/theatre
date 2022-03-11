@@ -1,7 +1,7 @@
 import {editable as e, RefreshSnapshot, SheetProvider} from '@theatre/r3f'
 import {OrbitControls, Stars} from '@react-three/drei'
 import {getProject} from '@theatre/core'
-import React, {Suspense, useState} from 'react'
+import React, {Suspense, useEffect, useState, useRef} from 'react'
 import {Canvas} from '@react-three/fiber'
 import {useGLTF} from '@react-three/drei'
 import sceneGLB from './scene.glb'
@@ -45,6 +45,16 @@ function Model({url}: {url: string}) {
   )
 }
 
+function SheetDebug({uniqueName}: {uniqueName: string}) {
+  const objRef = useRef()
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    console.log(`SheetDebug::${uniqueName}::${!!objRef.current}`)
+    setTimeout(() => setCount(count + 1), 3000)
+  })
+  return <e.group uniqueName={uniqueName} objRef={objRef} />
+}
+
 function App() {
   const bgs = ['#272730', '#b7c5d1']
   const [bgIndex, setBgIndex] = useState(0)
@@ -57,6 +67,7 @@ function App() {
     >
       <Canvas dpr={[1.5, 2]} linear shadows frameloop="demand">
         <SheetProvider getSheet={() => getProject('Space').sheet('Scene')}>
+          <SheetDebug uniqueName="MyObject" />
           <fog attach="fog" args={[bg, 16, 30]} />
           <color attach="background" args={[bg]} />
           <ambientLight intensity={0.75} />
